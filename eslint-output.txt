@@ -1,0 +1,17 @@
+﻿
+F:\movies\movie-backend\src\auth\guards\jwt-auth.guard.ts
+  5:53  error  Delete `┬╖`  prettier/prettier
+
+F:\movies\movie-backend\src\main.ts
+  8:1  warning  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+F:\movies\movie-backend\src\movies\movies.service.ts
+  74:7  error  Unsafe return of a value of type `any`  @typescript-eslint/no-unsafe-return
+
+F:\movies\movie-backend\src\user\dto\create-user.dto.ts
+  37:33  error  Unnecessary escape character: \.  no-useless-escape
+  37:59  error  Unnecessary escape character: \.  no-useless-escape
+
+Γ£û 5 problems (4 errors, 1 warning)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+
