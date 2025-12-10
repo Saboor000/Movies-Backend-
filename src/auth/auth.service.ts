@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { OAuth2Client } from 'google-auth-library';
 import { UsersService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -9,6 +15,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -41,5 +48,33 @@ export class AuthService {
         favoriteGenres: user.favoriteGenres,
       },
     };
+  }
+
+  async loginWithGoogle(token: string) {
+    const client = new OAuth2Client(this.configService.get('GOOGLE_CLIENT_ID'));
+
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: this.configService.get('GOOGLE_CLIENT_ID'),
+      });
+      const payload = ticket.getPayload();
+
+      if (!payload || !payload.email) {
+        throw new BadRequestException('Invalid Google token');
+      }
+
+      const user = await this.usersService.findByEmail(payload.email);
+      if (!user) {
+        throw new UnauthorizedException('User not registered');
+      }
+
+      return this.login(user);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new BadRequestException('Invalid Google token');
+    }
   }
 }

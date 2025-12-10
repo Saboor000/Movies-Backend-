@@ -26,4 +26,9 @@ export class AuthController {
     const user = await this.authService.validateUser(body.email, body.password);
     return this.authService.login(user);
   }
+
+  @Post('google')
+  async googleLogin(@Body('token') token: string) {
+    return this.authService.loginWithGoogle(token);
+  }
 }
