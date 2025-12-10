@@ -2,6 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { GoogleLoginDto } from './dto/google-login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -28,7 +29,7 @@ export class AuthController {
   }
 
   @Post('google')
-  async googleLogin(@Body('token') token: string) {
-    return this.authService.loginWithGoogle(token);
+  async googleLogin(@Body() dto: GoogleLoginDto) {
+    return this.authService.loginWithGoogle(dto.id_token);
   }
 }

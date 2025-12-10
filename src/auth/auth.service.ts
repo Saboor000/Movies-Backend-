@@ -12,11 +12,16 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  private googleClient: OAuth2Client;
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) {
+    this.googleClient = new OAuth2Client(
+      this.configService.get<string>('GOOGLE_CLIENT_ID'),
+    );
+  }
 
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.usersService.findByEmail(email);
@@ -50,12 +55,10 @@ export class AuthService {
     };
   }
 
-  async loginWithGoogle(token: string) {
-    const client = new OAuth2Client(this.configService.get('GOOGLE_CLIENT_ID'));
-
+  async loginWithGoogle(idToken: string) {
     try {
-      const ticket = await client.verifyIdToken({
-        idToken: token,
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken,
         audience: this.configService.get('GOOGLE_CLIENT_ID'),
       });
       const payload = ticket.getPayload();
